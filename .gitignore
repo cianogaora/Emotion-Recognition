@@ -1,1 +1,6 @@
 fer2013.csv
+.idea
+__pycache__
+/archive/train
+/archive/
+/all_train/

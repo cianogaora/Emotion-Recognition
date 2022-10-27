@@ -1,12 +1,26 @@
-import pandas as pd
+import os
+import cv2
 from torch.utils.data import Dataset
-from torchvision import datasets
-from torchvision.transforms import ToTensor
 
 
 class MyDataset(Dataset):
-    def __init__(self, img_dir, transform):
-        self.img_labels = pd.read_csv()
+    def __init__(self, img_dir, labels, transform, label_transform):
+        self.labels = labels
+        self.images = []
+        self.transforms = transform
+        self.label_transform = label_transform
+        for img_name in os.listdir(img_dir):
+            self.images.append(cv2.imread(img_dir + '/' + img_name, 0))
 
-    def __len__(self)
-        return len(self.img_labels)
+    def __len__(self):
+        return len(self.labels)
+
+    def __getitem__(self, idx):
+        image = self.images[idx]
+        label = self.labels[idx]
+        if self.transforms:
+            image = self.transforms(image)
+        if self.label_transform:
+            label = self.label_transform(label)
+
+        return image, label

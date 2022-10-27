@@ -1,26 +1,29 @@
-import pandas as pd
-import numpy as np
 import cv2
-import math
+import os
+import shutil
 
-path = 'fer2013.csv'
-data = pd.read_csv(path)
+def main():
+    emotes = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+    i = 0
+    train_labels = []
+    if os.path.isdir('all_train'):
+        shutil.rmtree('all_train')
 
-labels = data['emotion']
-images = data['pixels']
-image_list = []
+    os.mkdir('all_train')
+    for emote in emotes:
+        path = f'archive/train/{emote}'
+        num_ims = len(os.listdir(path))
 
-for image in images:
-    image = image.split()
-    image = list(map(int, image))
-    image = np.array(image)
-    image = np.reshape(image, (math.sqrt(image.shape[0]), math.sqrt(image.shape[0])))
-    image_list.append(image)
-    
-print(image_list[0])
+        for im_name in os.listdir(path):
+            shutil.copy(path + '/' + im_name, 'all_train/' + 'e' + str(i) + 'e' + im_name)
 
-cv2.imshow('sample', image_list[0].astype(np.uint8))
+        for x in range(num_ims):
+            train_labels.append(str(i))
+        print(f'{emote}: {num_ims}')
+        i += 1
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-cv2.waitKey(1)
+    # return train_labels
+
+
+if __name__ == '__main__':
+    main()
