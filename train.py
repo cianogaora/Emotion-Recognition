@@ -38,7 +38,7 @@ def main():
     # params = cnn.parameters()
     params = net.parameters()
     optimiser = optim.Adam(params=params, lr=3e-4)
-    log_interval = 500
+    log_interval = 150
 
     for epoch in range(10):
         print('epoch: ', epoch)
@@ -54,8 +54,8 @@ def main():
 
             # outputs = cnn(inputs)
             outputs = net(inputs)
-            # loss = F.nll_loss(outputs, labels)
-            loss = nn.CrossEntropyLoss()(outputs, labels)
+            loss = F.nll_loss(outputs, labels)
+            # loss = nn.CrossEntropyLoss()(outputs, labels)
             loss.backward()
 
             optimiser.step()
@@ -70,7 +70,7 @@ def main():
     print('training complete')
     model_count = len(os.listdir('models'))
     # torch.save(cnn.state_dict(), f'models/model{model_count}.pth')
-    torch.save(net.state_dict(), 'models/model'+str(model_count)+'.pth')
+    torch.save(net.state_dict(), f'models/model{model_count}.pth')
 
 if __name__ == '__main__':
     main()
