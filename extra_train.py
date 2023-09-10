@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-
 import split_data
 import dataset
 from torchvision import transforms
