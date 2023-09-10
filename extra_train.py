@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 
 import split_data
@@ -9,7 +10,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from model import CNN
-
+import torch.nn.functional as F
 
 def main():
     train_path = 'all_train'
@@ -26,27 +27,30 @@ def main():
 
     train_dataset = dataset.MyDataset(train_path, train_labels, my_transforms, None)
 
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
 
+    models = os.listdir('models')
+    model_path = models[-1]
     cnn = CNN()
-    cnn.load_state_dict(torch.load('models/model0.pth'))
-
-    criterion = nn.CrossEntropyLoss()
+    cnn.load_state_dict(torch.load(f'models/{model_path}'))
+    print(f'training model {model_path}')
+    #criterion = nn.CrossEntropyLoss()
     params = cnn.parameters()
-    optimiser = optim.Adam(params=params, lr=1e-3)
-    log_interval = 80
+    optimiser = optim.Adam(params=params, lr=3e-4)
+    log_interval = 600
 
-    for epoch in range(50):
+    for epoch in range(5):
         print('epoch: ', epoch + 1)
         cnn.train()
         running_loss = 0.0
+        j = 1
         for i, data in enumerate(train_loader):
             inputs, labels = data
 
             optimiser.zero_grad()
 
             outputs = cnn(inputs)
-            loss = criterion(outputs, labels)
+            loss = nn.CrossEntropyLoss()(outputs, labels)
             loss.backward()
             optimiser.step()
 
@@ -54,10 +58,10 @@ def main():
             if i % log_interval == 0:
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                     epoch + 1, i * len(inputs), len(train_loader.dataset),
-                    100. * i / len(train_loader), loss.item()))
-
+                    100. * i / len(train_loader), running_loss/j))
+            j+=1
     print('training complete')
-    torch.save(cnn.state_dict(), f'models/model0.pth')
+    torch.save(cnn.state_dict(), f'models/{model_path}')
 
 
 if __name__ == '__main__':

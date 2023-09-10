@@ -2,20 +2,20 @@ import cv2
 import os
 import shutil
 
-def main():
+def split_data():
     emotes = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
     i = 0
     train_labels = []
-    if os.path.isdir('all_train'):
-        shutil.rmtree('all_train')
+    if os.path.isdir('all_test'):
+        shutil.rmtree('all_test')
 
-    os.mkdir('all_train')
+    os.mkdir('all_test')
     for emote in emotes:
-        path = f'archive/train/{emote}'
+        path = f'archive/test/{emote}'
         num_ims = len(os.listdir(path))
-
+        print(f'adding images from {path}')
         for im_name in os.listdir(path):
-            shutil.copy(path + '/' + im_name, 'all_train/' + 'e' + str(i) + 'e' + im_name)
+            shutil.copy(path + '/' + im_name, 'all_test/' + 'e' + str(i) + 'e' + im_name)
 
         for x in range(num_ims):
             train_labels.append(str(i))
@@ -26,4 +26,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    split_data()
