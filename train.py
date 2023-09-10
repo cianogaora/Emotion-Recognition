@@ -1,8 +1,4 @@
 import os
-import shutil
-
-import numpy
-
 import split_data
 import dataset
 from torchvision import transforms
