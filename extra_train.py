@@ -42,7 +42,7 @@ def main(modelChoice):
     optimiser = optim.Adam(params=params, lr=3e-4)
     log_interval = 200
 
-    for epoch in range(7):
+    for epoch in range(20):
         print('epoch: ', epoch + 1)
         # cnn.train()
         net.train()
