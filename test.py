@@ -25,7 +25,7 @@ def check_accuracy(model, loader):
         
         print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}')
 
-def main():
+def main(modelChoice):
     path = 'all_test'
     my_transforms = transforms.Compose([
         ToTensor()
@@ -39,12 +39,12 @@ def main():
     test_loader = dataloader.DataLoader(test_dataset, batch_size=8, shuffle=True)
 
     net = Net()
-    net = nn.DataParallel(net)
+    # net = nn.DataParallel(net)
 
     models = os.listdir('models')
-    model_path = 'model.pth'
-    print(model_path)
-    net.load_state_dict(torch.load('models/model.pth'))
+    print(modelChoice)
+
+    net.load_state_dict(torch.load(f'models/model{modelChoice}.pth'))
 
     criterion = nn.CrossEntropyLoss()
     params = net.parameters()
@@ -86,4 +86,5 @@ if __name__=='__main__':
     # cnn = CNN()
     # cnn.load_state_dict(torch.load(f'models/{model_path}'))
     # check_accuracy(cnn, test_loader)
-    main()
+    modelChoice = str(input("Enter model number: "))
+    main(modelChoice)
