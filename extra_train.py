@@ -36,7 +36,7 @@ def main(modelChoice, epochs, batch_s):
     # cnn.load_state_dict(torch.load(f'models/model{modelChoice}.pth'))
     net.load_state_dict(torch.load(f'models/model{modelChoice}.pth'))
 
-    print(f'training model {model_path}')
+    print(f'training model{modelChoice}.pth')
     # criterion = nn.CrossEntropyLoss()
     # params = cnn.parameters()
     params = net.parameters()
