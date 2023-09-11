@@ -44,33 +44,46 @@ class CNN(nn.Module):
         return x
         '''
 
-
+def conv_block(in_channels, out_channels, pool=False):
+    layers = [nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+              nn.BatchNorm2d(out_channels),
+              nn.ReLU(inplace=True)]
+    if pool: layers.append(nn.MaxPool2d(2))
+    return nn.Sequential(*layers)
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        # 3 input image channel, 16 output channels, 3x3 square convolution kernel
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=2, padding=1)
-        self.conv2 = nn.Conv2d(32, 256, kernel_size=3, stride=2, padding=1)
-        self.conv3 = nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1)
-        self.conv4 = nn.Conv2d(512, 512, kernel_size=3, stride=2, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.dropout = nn.Dropout(0.6)
-        self.batchnorm1 = nn.BatchNorm2d(32)
-        self.batchnorm2 = nn.BatchNorm2d(256)
-        self.batchnorm3 = nn.BatchNorm2d(512)
-        self.fc1 = nn.Linear(512, 256)
-        self.fc2 = nn.Linear(256, 64)
-        self.fc3 = nn.Linear(64, 7)
+        self.input = conv_block(1, 64)
 
-    def forward(self, x):
-        x = self.batchnorm1(F.relu(self.conv1(x)))
-        x = self.batchnorm2(F.relu(self.conv2(x)))
-        x = self.dropout(self.batchnorm2(self.pool(x)))
-        x = self.batchnorm3(self.pool(F.relu(self.conv3(x))))
-        x = self.dropout(self.conv4(x))
-        # x = x.view(-1, 1024)  # Flatten layer
-        x = torch.flatten(x, 1)
-        x = self.dropout(self.fc1(x))
-        x = self.dropout(self.fc2(x))
-        x = F.log_softmax(self.fc3(x), dim=1)
-        return x
+        self.conv1 = conv_block(64, 64, pool=True)
+        self.res1 = nn.Sequential(conv_block(64, 32), conv_block(32, 64))
+        self.drop1 = nn.Dropout(0.5)
+
+        self.conv2 = conv_block(64, 64, pool=True)
+        self.res2 = nn.Sequential(conv_block(64, 32), conv_block(32, 64))
+        self.drop2 = nn.Dropout(0.5)
+
+        self.conv3 = conv_block(64, 64, pool=True)
+        self.res3 = nn.Sequential(conv_block(64, 32), conv_block(32, 64))
+        self.drop3 = nn.Dropout(0.5)
+
+        self.classifier = nn.Sequential(nn.MaxPool2d(6),
+                                        nn.Flatten(),
+                                        nn.Linear(64, 7))
+
+    def forward(self, xb):
+        out = self.input(xb)
+
+        out = self.conv1(out)
+        out = self.res1(out) + out
+        out = self.drop1(out)
+
+        out = self.conv2(out)
+        out = self.res2(out) + out
+        out = self.drop2(out)
+
+        out = self.conv3(out)
+        out = self.res3(out) + out
+        out = self.drop3(out)
+
+        return self.classifier(out)

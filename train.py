@@ -2,7 +2,7 @@ import os
 import split_data
 import dataset
 from torchvision import transforms
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor, RandomHorizontalFlip
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -15,6 +15,7 @@ def main():
     train_path = 'all_train'
 
     my_transforms = transforms.Compose([
+        # RandomHorizontalFlip(),
         ToTensor()
     ])
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -23,14 +24,13 @@ def main():
     for name in os.listdir('all_train'):
         train_labels.append(int(name[1]))
 
-    print(train_labels[0])
     train_dataset = dataset.MyDataset(train_path, train_labels, my_transforms, None)
 
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=8, drop_last=True, shuffle=True)
 
     cnn = CNN()
     net = Net()
-    # criterion = F.nll_loss()
+    criterion = nn.CrossEntropyLoss()
     # params = cnn.parameters()
     params = net.parameters()
     optimiser = optim.Adam(params=params, lr=3e-4)
@@ -50,8 +50,11 @@ def main():
 
             # outputs = cnn(inputs)
             outputs = net(inputs)
-            loss = F.nll_loss(outputs, labels)
-            # loss = nn.CrossEntropyLoss()(outputs, labels)
+            # print(outputs)
+            # print(labels)
+            # loss = F.nll_loss(outputs, labels)
+
+            loss = criterion(outputs, labels)
             loss.backward()
 
             optimiser.step()
@@ -67,6 +70,6 @@ def main():
     model_count = len(os.listdir('models'))
     # torch.save(cnn.state_dict(), f'models/model{model_count}.pth')
     torch.save(net.state_dict(), f'models/model{model_count}.pth')
-
+    print(f"Saving model{model_count}.pth")
 if __name__ == '__main__':
     main()
