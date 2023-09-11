@@ -11,7 +11,8 @@ from torch.utils.data import DataLoader
 from model import CNN, Net
 import torch.nn.functional as F
 
-def main(modelChoice):
+
+def main(modelChoice, epochs, batch_s):
     train_path = 'all_train'
 
     my_transforms = transforms.Compose([
@@ -26,7 +27,7 @@ def main(modelChoice):
 
     train_dataset = dataset.MyDataset(train_path, train_labels, my_transforms, None)
 
-    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, drop_last=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_s, shuffle=True, drop_last=True)
 
     models = os.listdir('models')
     model_path = models[-1]
@@ -35,14 +36,14 @@ def main(modelChoice):
     # cnn.load_state_dict(torch.load(f'models/model{modelChoice}.pth'))
     net.load_state_dict(torch.load(f'models/model{modelChoice}.pth'))
 
-    print(f'training model {model_path}')
-    #criterion = nn.CrossEntropyLoss()
+    print(f'training model{modelChoice}.pth')
+    # criterion = nn.CrossEntropyLoss()
     # params = cnn.parameters()
     params = net.parameters()
     optimiser = optim.Adam(params=params, lr=3e-4)
-    log_interval = 200
+    log_interval = 150
 
-    for epoch in range(20):
+    for epoch in range(epochs):
         print('epoch: ', epoch + 1)
         # cnn.train()
         net.train()
@@ -63,14 +64,16 @@ def main(modelChoice):
             if i % log_interval == 0:
                 print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                     epoch + 1, i * len(inputs), len(train_loader.dataset),
-                    100. * i / len(train_loader), running_loss/j))
-            j+=1
+                    100. * i / len(train_loader), running_loss / j))
+            j += 1
     print('training complete')
     # torch.save(cnn.state_dict(), f'models/model{modelChoice}.pth')
     torch.save(net.state_dict(), f'models/model{modelChoice}.pth')
-
+    print(f"Saving model{modelChoice}.pth")
 
 
 if __name__ == '__main__':
     modelChoice = str(input("Enter model number: "))
-    main(modelChoice)
+    epochs = int(input("Enter number of epochs: "))
+    batch_size = int(input("Batch size: "))
+    main(modelChoice, epochs, batch_size)
