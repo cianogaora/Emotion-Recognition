@@ -26,7 +26,7 @@ def main():
 
     train_dataset = dataset.MyDataset(train_path, train_labels, my_transforms, None)
 
-    train_loader = DataLoader(train_dataset, batch_size=8, drop_last=True, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=16, drop_last=True, shuffle=True)
 
     cnn = CNN()
     net = Net()
@@ -34,7 +34,7 @@ def main():
     # params = cnn.parameters()
     params = net.parameters()
     optimiser = optim.Adam(params=params, lr=3e-4)
-    log_interval = 150
+    log_interval = 100
 
     for epoch in range(10):
         print('epoch: ', epoch)

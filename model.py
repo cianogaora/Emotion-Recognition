@@ -69,7 +69,7 @@ class Net(nn.Module):
 
         self.classifier = nn.Sequential(nn.MaxPool2d(6),
                                         nn.Flatten(),
-                                        nn.Linear(64, 7))
+                                        nn.Linear(64, 6))
 
     def forward(self, xb):
         out = self.input(xb)
