@@ -10,20 +10,21 @@ import os
 from torchvision import transforms
 from torchvision.transforms import ToTensor
 
+
 def check_accuracy(model, loader):
     num_correct = 0
     num_samples = 0
     model.eval()
-    
+
     with torch.no_grad():
         for x, y in loader:
-            
             scores = model(x)
             _, predictions = scores.max(1)
             num_correct += (predictions == y).sum()
             num_samples += predictions.size(0)
-        
-        print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct)/float(num_samples)*100:.2f}')
+
+        print(f'Got {num_correct} / {num_samples} with accuracy {float(num_correct) / float(num_samples) * 100:.2f}')
+
 
 def main(modelChoice):
     path = 'all_test'
@@ -70,7 +71,7 @@ def main(modelChoice):
                 100. * correct / len(test_loader.dataset)))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     # path = 'all_test/'
     # my_transforms = transforms.Compose([
     #     ToTensor()
