@@ -36,7 +36,7 @@ def main(modelChoice):
 
     test_dataset = MyDataset(path, test_labels, my_transforms, None)
 
-    test_loader = dataloader.DataLoader(test_dataset, batch_size=1, shuffle=True)
+    test_loader = dataloader.DataLoader(test_dataset, batch_size=4, shuffle=True)
 
     net = Net()
     # net = nn.DataParallel(net)
