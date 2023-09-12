@@ -53,23 +53,23 @@ def conv_block(in_channels, out_channels, pool=False):
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.input = conv_block(1, 64)
+        self.input = conv_block(1, 32)
 
-        self.conv1 = conv_block(64, 64, pool=True)
+        self.conv1 = conv_block(32, 64, pool=True)
         self.res1 = nn.Sequential(conv_block(64, 32), conv_block(32, 64))
-        self.drop1 = nn.Dropout(0.5)
+        self.drop1 = nn.Dropout(0.6)
 
-        self.conv2 = conv_block(64, 64, pool=True)
-        self.res2 = nn.Sequential(conv_block(64, 32), conv_block(32, 64))
-        self.drop2 = nn.Dropout(0.5)
+        self.conv2 = conv_block(64, 128, pool=True)
+        self.res2 = nn.Sequential(conv_block(128, 64), conv_block(64, 128))
+        self.drop2 = nn.Dropout(0.6)
 
-        self.conv3 = conv_block(64, 64, pool=True)
-        self.res3 = nn.Sequential(conv_block(64, 32), conv_block(32, 64))
-        self.drop3 = nn.Dropout(0.5)
+        self.conv3 = conv_block(128, 256, pool=True)
+        self.res3 = nn.Sequential(conv_block(256, 128), conv_block(128, 256))
+        self.drop3 = nn.Dropout(0.6)
 
         self.classifier = nn.Sequential(nn.MaxPool2d(6),
                                         nn.Flatten(),
-                                        nn.Linear(64, 6))
+                                        nn.Linear(256, 6))
 
     def forward(self, xb):
         out = self.input(xb)
