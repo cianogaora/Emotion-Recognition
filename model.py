@@ -79,11 +79,11 @@ class Net(nn.Module):
 
         out = self.conv1(out)
         out = self.res1(out) + out
-        out = self.drop1(out)
+        # out = self.drop1(out)
 
         out = self.conv2(out)
         out = self.res2(out) + out
-        out = self.drop2(out)
+        # out = self.drop2(out)
 
         out = self.conv3(out)
         out = self.res3(out) + out
